@@ -67,7 +67,7 @@ class User(Person):
 
     def to_string(self):
         books = ",".join(self._borrowed_books)
-        return f"{self._name}|{books}"
+        return f"{self._name} | {books}"
 
     @staticmethod
     def from_string(line):
@@ -119,16 +119,25 @@ class Library:
 
     def load_data(self):
         if os.path.exists(BOOKS_FILE):
+            self._books = []
             with open(BOOKS_FILE) as f:
-                self._books = [Book.from_string(line) for line in f]
+                for line in f:
+                    book = Book.from_string(line)
+                    self._books.append(book)
 
         if os.path.exists(USERS_FILE):
+            self._users = []
             with open(USERS_FILE) as f:
-                self._users = [User.from_string(line) for line in f]
+                for line in f:
+                    user = User.from_string(line)
+                    self._users.append(user)
 
         if os.path.exists(LIBRARIANS_FILE):
+            self._librarians = []
             with open(LIBRARIANS_FILE) as f:
-                self._librarians = [Person(line.strip()) for line in f]
+                for line in f:
+                    librarian = Person(line.strip())
+                    self._librarians.append(librarian)
 
     def save_data(self):
         with open(BOOKS_FILE, "w") as f:
@@ -148,7 +157,12 @@ class Library:
         print("Book added successfully")
 
     def remove_book(self, title):
-        self._books = [b for b in self._books if b._title != title]
+        updated_books = []
+        for b in self._books:
+            if b._title != title:
+                updated_books.append(b)
+
+        self._books = updated_books
         print("Book removed successfully")
 
     def add_user(self, name):
@@ -210,7 +224,12 @@ def main():
         librarian.menu(library)
 
     elif role == "2":
-        user = next((u for u in library._users if u._name == name), None)
+        user = None
+
+        for u in library._users:
+            if u._name == name:
+                user = u
+                break
 
         if not user:
             print("User not found")
