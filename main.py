@@ -20,7 +20,7 @@ class Book:
         self._status = "available"
 
     def to_string(self):
-        return f"{self._title} | {self._author} | {self._status}"
+        return f"{self._title}|{self._author}|{self._status}"
 
     @staticmethod
     def from_string(line):
@@ -67,7 +67,7 @@ class User(Person):
 
     def to_string(self):
         books = ",".join(self._borrowed_books)
-        return f"{self._name} | {books}"
+        return f"{self._name}|{books}"
 
     @staticmethod
     def from_string(line):
@@ -223,17 +223,30 @@ def main():
         library._librarians.append(librarian)
         librarian.menu(library)
 
+
     elif role == "2":
         user = None
 
         for u in library._users:
+
             if u._name == name:
                 user = u
+
                 break
 
         if not user:
-            print("User not found")
-            return
+
+            print("User not found.")
+
+            choice = input("Do you want to register? (y/n): ")
+
+            if choice.lower() == "y":
+                library.add_user(name)
+                user = library._users[-1]
+
+                print("Registration successful. You are now logged in.")
+            else:
+                return
 
         user.menu(library)
 
